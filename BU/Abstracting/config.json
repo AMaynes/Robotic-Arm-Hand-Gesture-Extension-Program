@@ -1,0 +1,14 @@
+{
+  "robotic_arms": [
+    {
+      "arm_type": "Dobot",
+      "port": "COM5",
+      "baudrate": 115200
+    },
+    {
+      "arm_type": "uArm",
+      "port": "COM6",
+      "baudrate": 9600
+    }
+  ]
+}

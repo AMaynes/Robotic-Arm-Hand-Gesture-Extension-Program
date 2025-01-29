@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<robot name="Dobot Magician">
+
+  <!-- Base Link -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.158 0.158 0.05"/> <!-- Square base -->
+      </geometry>
+      <origin xyz="0 0 0.025"/>
+    </visual>
+  </link>
+
+  <!-- Joint 1 -->
+  <joint name="joint_1" type="revolute">
+    <parent link="base_link"/>
+    <child link="link_0"/>
+    <origin xyz="0 0 0.0"/> <!-- Connects to link_0 -->
+    <axis xyz="0 0 1"/> <!-- Rotates about z-axis -->
+    <limit lower="-1.5708" upper="1.5708" effort="10" velocity="1"/>
+  </joint>
+
+  <!-- Link 0 (vertical column connecting J1 and J2) -->
+  <link name="link_0">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.138"/> <!-- Vertical column -->
+      </geometry>
+      <origin xyz="0 0 0.069"/> <!-- Frame is at the bottom; move geometry up -->
+    </visual>
+  </link>
+
+  <!-- Joint 2 -->
+  <joint name="joint_2" type="revolute">
+    <parent link="link_0"/>
+    <child link="link_1"/>
+    <origin xyz="0 0 0.138" rpy="0.0 0.0 0.0"/>  <!-- Connects to the top of link_0 -->
+    <axis xyz="0 1 0"/> <!-- Rotates about y-axis -->
+    <limit lower="0.0" upper="1.4835" effort="10" velocity="1"/> <!-- Joint 2 range -->
+  </joint>
+
+  <!-- Link 1 -->
+  <link name="link_1">
+    <visual>
+      <geometry>
+        <box size="0.02 0.02 0.135"/> <!-- Link 1 -->
+      </geometry>
+      <origin xyz="0.0 0 0.0675"/> <!-- Shift geometry so frame is at one end -->
+    </visual>
+  </link>
+
+  <!-- Fixed Frame for Global Alignment -->
+  <joint name="fixed_global_frame" type="fixed">
+    <parent link="link_1"/>
+    <child link="global_frame_reference"/>
+    <origin xyz="0.0 0 0.135" rpy="0.0 -1.5708 0.0"/> <!-- Align global reference frame -->
+  </joint>
+
+  <link name="global_frame_reference">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/> <!-- Visualization aid -->
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- Joint 3 -->
+  <joint name="joint_3" type="revolute">
+    <parent link="global_frame_reference"/> <!-- Reference global fixed frame -->
+    <child link="link_2"/>
+    <origin xyz="0.0 0 0.0"/> <!-- No additional offset -->
+    <axis xyz="0 1 0"/> <!-- Rotates about y-axis in global frame -->
+    <limit lower="-0.1745" upper="1.5708" effort="10" velocity="1"/> <!-- Joint 3 range -->
+  </joint>
+
+  <!-- Link 2 -->
+  <link name="link_2">
+    <visual>
+      <geometry>
+        <box size="0.147 0.02 0.02"/> <!-- Link 2 -->
+      </geometry>
+      <origin xyz="0.0735 0 0"/> <!-- Shift geometry so frame is at one end -->
+    </visual>
+  </link>
+
+  <!-- End Effector -->
+  <joint name="joint_E" type="fixed">
+    <parent link="link_2"/>
+    <child link="end_effector"/>
+    <origin xyz="0.147 0 0.0"/> <!-- End-effector position -->
+  </joint>
+
+  <link name="end_effector">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/> <!-- End-effector visualization -->
+      </geometry>
+      <origin xyz="0.0 0.0 0.0"/>
+    </visual>
+  </link>
+
+</robot>
