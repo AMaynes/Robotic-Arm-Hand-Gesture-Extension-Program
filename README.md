@@ -11,7 +11,7 @@ this program can be used to teach ME-150 students about emerging AI & robotics t
 - DobotDllType.py (Main import for robotic arm commands)
 - Dobot DLL Files (DobotDllType.py dependency)
 
-## General Design Diagram
+## General Design Diagram 
 UserInterface ->  *Calls "Tracker" Methods*  
 
 Tracker (prev. named TrackingInterfacing) -> *Main logic/program flow*
