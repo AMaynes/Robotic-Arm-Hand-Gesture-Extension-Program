@@ -1,5 +1,4 @@
-import threading
-import DobotDllType as dType
+from Abstracting import DobotDllType as dType
 from serial.tools import list_ports
 
 

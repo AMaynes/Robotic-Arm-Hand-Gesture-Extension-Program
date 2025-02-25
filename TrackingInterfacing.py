@@ -3,8 +3,8 @@ import mediapipe as mp
 import time
 import numpy as np
 import HandGestureInterpretation # type: ignore
-import ControlModes # type: ignore
-import DobotDllType as dType
+from Abstracting import DobotDllType as dType
+from Abstracting.src import ControlModes
 from serial.tools import list_ports
 import math
 
