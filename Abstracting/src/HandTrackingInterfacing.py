@@ -77,8 +77,9 @@ def beginTracking(arm_type):
     track = False  # Tracking state (off by default)
     controlMode = 1  # Default control mode (rail control)
 
-    oldX_avg = 0
-    oldY_avg = 0
+    print("Initiate averages to 0")
+    currX = 0
+    currY = 0
     palmX_sum = 0
     palmY_sum = 0
     count = 0
@@ -148,34 +149,39 @@ def beginTracking(arm_type):
                     average_palm_x = palmX_sum / count
                     average_palm_y = palmY_sum / count
 
-                    if(count % 10 == 0):
-                        oldX_avg = average_palm_x
-                        oldY_avg = average_palm_y
+            #todo refine when averages should be coaught up so it looks natural
+                    if(count % 30 == 0):
+                        currX = average_palm_x
+                        currY = average_palm_y
 
 
-                    distX = abs(palm_x - average_palm_x)
-                    distY = abs(palm_y - average_palm_y)
+                    diffX = abs(palm_x - average_palm_x)
+                    diffY = abs(palm_y - average_palm_y)
 
-                    if(distX < 55 or distY < 55):
+                    if(diffX > 55 or diffY > 55):
+                        print("reset averages")
                         palmX_sum = 0
                         palmY_sum = 0
                         count = 0
                         #todo make average
 
-                    chang_in_x_avg = abs(average_palm_x - oldX_avg)
-                    chang_in_y_avg = abs(average_palm_y - oldY_avg)
+                    # chang_in_x = abs(average_palm_x - currX)
+                    # chang_in_y = abs(average_palm_y - currY)
 
                 # Handle gesture recognition and movement tracking
                 if frame % GESTURE_UPDATE_INTERVAL == 0:
                     print("X, Y, Z: ", palm_x, palm_y, palm_z)
 
-                    print("Consistent avg, X, Y: ", average_palm_x, average_palm_y)
+                    print("Avg, X, Y: ", average_palm_x, average_palm_y)
 
+                    print("Curr X, Y: ", currX, currY)
 
                     #todo make cords less shaky
                     gesture = CoordGestureInterpretation.interpretHandGest(hand.landmark)  # Interpret hand gesture
 
                     # Handle different gestures for controlling the robotic arm
+
+
                     if gesture == 1:  # Toggle tracking state
                         track = not track
                         time.sleep(2)  # Prevent repeated toggles in quick succession
@@ -194,9 +200,9 @@ def beginTracking(arm_type):
                     frame = 0
 
                 # Predict the next hand position for movement control
-                #todo make these changeable variables with a setter method for the ration of percision
 
-                    predicted_position = hand_physics.predict_next_position((oldX_avg, oldY_avg, palm_z), 0.1)
+                    #todo replace with averages
+                    predicted_position = hand_physics.predict_next_position((currX, currY, palm_z), 0.1)
                     lineaRail = normalPalm_x * 1000  # Convert palm x to rail position
 
                 # Handle arm movement based on gesture control
@@ -206,11 +212,15 @@ def beginTracking(arm_type):
                                                                                                    predicted_position[
                                                                                                        1],
                                                                                                    predicted_position[
+
                                                                                                        2], lineaRail):
+
                     if controlMode == 1:  # Rail control mode
                         robotic_arm.rail_move_to(200, 0, 0, lineaRail)
                         cv2.circle(combined_img, (100, 100), 10, (255, 0, 0), cv2.FILLED)  # Green tracking indicator
                     elif controlMode == 2:  # Arm control mode
+                        #todo remove this print
+                        print("We are in control mode 2!")
                         robotic_arm.move_to(predicted_position[0], predicted_position[1], predicted_position[2])
                         cv2.circle(combined_img, (100, 100), 10, (255, 0, 0), cv2.FILLED)  # Green tracking indicator
                 else:
