@@ -148,6 +148,11 @@ def beginTracking(arm_type):
                     average_palm_x = palmX_sum / count
                     average_palm_y = palmY_sum / count
 
+                    if(count % 10 == 0):
+                        oldX_avg = average_palm_x
+                        oldY_avg = average_palm_y
+
+
                     distX = abs(palm_x - average_palm_x)
                     distY = abs(palm_y - average_palm_y)
 
@@ -156,11 +161,15 @@ def beginTracking(arm_type):
                         palmY_sum = 0
                         count = 0
                         #todo make average
+
                     chang_in_x_avg = abs(average_palm_x - oldX_avg)
+                    chang_in_y_avg = abs(average_palm_y - oldY_avg)
 
                 # Handle gesture recognition and movement tracking
                 if frame % GESTURE_UPDATE_INTERVAL == 0:
                     print("X, Y, Z: ", palm_x, palm_y, palm_z)
+
+                    print("Consistent avg, X, Y: ", average_palm_x, average_palm_y)
 
 
                     #todo make cords less shaky
@@ -185,8 +194,9 @@ def beginTracking(arm_type):
                     frame = 0
 
                 # Predict the next hand position for movement control
-                if (distX < 55 or distY < 55):
-                    predicted_position = hand_physics.predict_next_position((palm_y, palm_x, palm_z), 0.1)
+                #todo make these changeable variables with a setter method for the ration of percision
+
+                    predicted_position = hand_physics.predict_next_position((oldX_avg, oldY_avg, palm_z), 0.1)
                     lineaRail = normalPalm_x * 1000  # Convert palm x to rail position
 
                 # Handle arm movement based on gesture control
