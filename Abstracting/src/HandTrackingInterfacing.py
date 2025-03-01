@@ -189,7 +189,6 @@ def beginTracking(arm_type):
                         controlMode = 1
                         robotic_arm.enableRail(1)  # Enable Rail
                     elif gesture == 3:  # Enable Arm control mode
-
                         controlMode = 2
                         robotic_arm.enableRail(0)  # Disable Rail
                     elif gesture == 4:  # Close the gripper
