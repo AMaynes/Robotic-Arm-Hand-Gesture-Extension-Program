@@ -162,7 +162,7 @@ while True:
         if recHands1.multi_hand_landmarks:
             for hand in recHands1.multi_hand_landmarks:
                 mpDraw.draw_landmarks(img1, hand, handSolution.HAND_CONNECTIONS)
-                    # Check for hand gestures
+                    # Check for hand gestures.py
 
                 if frame_counter % GESTURE_UPDATE_INTERVAL == 0:
 
