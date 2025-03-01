@@ -155,8 +155,8 @@ def beginTracking(arm_type):
                         currY = average_palm_y
 
 
-                    diffX = abs(palm_x - average_palm_x)
-                    diffY = abs(palm_y - average_palm_y)
+                    diffX = abs(abs(palm_x) - abs(average_palm_x))
+                    diffY = abs(abs(palm_y) - abs(average_palm_y))
 
                     if(diffX > 55 or diffY > 55):
                         print("reset averages")
