@@ -63,6 +63,14 @@ def beginTracking(arm_type):
     track = False
     controlMode = 1
 
+#_______________________________
+    currX = 0
+    currY = 0
+    palmX_sum = 0
+    palmY_sum = 0
+    count = 0
+#________________________________________
+
     while True:
         frame += 1
         # Reading images from both cameras
@@ -119,6 +127,29 @@ def beginTracking(arm_type):
                     palm_y = ((palm_y / pix_h) * 516) - 16
                     palm_z = CoordGestureInterpretation.CoordinateProcessing.estimate_depth(hand.landmark)
 
+#___________________________________________________________________________
+                    palmX_sum += palm_x
+                    palmY_sum += palm_y
+                    count += 1
+
+                    average_palm_x = palmX_sum / count
+                    average_palm_y = palmY_sum / count
+
+                    if (count % 30 == 0):
+                        currX = average_palm_x
+                        currY = average_palm_y
+
+                    diffX = abs(abs(palm_x) - abs(average_palm_x))
+                    diffY = abs(abs(palm_y) - abs(average_palm_y))
+
+                    if (diffX > 55 or diffY > 55):
+                        print("reset averages")
+                        palmX_sum = 0
+                        palmY_sum = 0
+                        count = 0
+
+#______________________________________________________________________________________-
+
                 # Gesture recognition & movement tracking every GESTURE_UPDATE_INTERVAL frames
                 if frame % 2 == 0:
                     if frame % GESTURE_UPDATE_INTERVAL == 0:
@@ -140,7 +171,7 @@ def beginTracking(arm_type):
                             robotic_arm.set_gripper_state(0)
 
                         frame = 0
-                    
+
                     predicted_position = hand_physics.predict_next_position((palm_y, palm_x, palm_z), 0.1)
                     lineaRail = normalPalm_x * 1000 # 1000 is perfect, if there are issues, its with the coordinate calibration
 
@@ -148,12 +179,14 @@ def beginTracking(arm_type):
                     if track and CoordGestureInterpretation.CoordinateProcessing.is_position_reachable(controlMode, predicted_position[0], predicted_position[1], predicted_position[2], lineaRail):
                         if controlMode == 1:  # Rail control mode
                             robotic_arm.rail_move_to(200, 0, 0, lineaRail)
-                            cv2.circle(combined_img, (100, 100), 10, (255, 0, 0), cv2.FILLED) # Green Tracking Indicator (Tracking Indicator)
+                            cv2.circle(combined_img, (100, 100), 10, (255, 0, 0), cv2.FILLED) # Blue Tracking Indicator (Tracking Indicator)
                             
                         elif controlMode == 2:  # Arm control mode
                             # Current position
+                            print("MOVE TO CALLED")
+                            print(predicted_position[0], predicted_position[1], predicted_position[2])
                             robotic_arm.move_to(predicted_position[0], predicted_position[1], predicted_position[2])
-                            cv2.circle(combined_img, (100, 100), 10, (255, 0, 0), cv2.FILLED) # Green Tracking Indicator (Tracking Indicator)
+                            cv2.circle(combined_img, (100, 100), 10, (255, 0, 0), cv2.FILLED) # Blue Tracking Indicator (Tracking Indicator)
                     else:
                         cv2.circle(combined_img, (100, 100), 10, (0, 0, 255), cv2.FILLED) # Red Tracking Indicator (Not Tracking Indicator)
 

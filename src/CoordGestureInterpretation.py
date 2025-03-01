@@ -35,7 +35,6 @@ class CoordinateProcessing:
 
         # Map to range [-180, 180]
         z_coordinate = (distance - min_distance) / (max_distance - min_distance) * 180 - 90
-        print(f"Distance: {distance} ZCoord: {z_coordinate}")
 
         return z_coordinate
 
@@ -75,10 +74,6 @@ class CoordinateProcessing:
                 angle_limits['Vrt_Angle'][0] <= VerticalAngle <= angle_limits['Vrt_Angle'][1] and
                 minimumEDistance <= euclideanDistance <= maximumEDistance
             )
-
-            print(f"{minimumEDistance} | {euclideanDistance} | {maximumEDistance}")
-            print(f"{angle_limits['Hz_Angle'][0]} | {horizontalAngle} | {angle_limits['Hz_Angle'][1]}")
-            print(f"{angle_limits['Vrt_Angle'][0]} | {VerticalAngle} | {angle_limits['Vrt_Angle'][1]}")
 
             if within_limits:
                 return True
