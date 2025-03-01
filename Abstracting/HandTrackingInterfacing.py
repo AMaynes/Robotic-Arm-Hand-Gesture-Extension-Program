@@ -122,7 +122,6 @@ def beginTracking(arm_type):
                 # Gesture recognition & movement tracking every GESTURE_UPDATE_INTERVAL frames
                 if frame % 2 == 0:
                     if frame % GESTURE_UPDATE_INTERVAL == 0:
-                        gesture = CoordGestureInterpretation.interpretHandGest(hand.landmark)
 
                         # Gesture handling
                         if gesture == 1:  # Toggle tracking
