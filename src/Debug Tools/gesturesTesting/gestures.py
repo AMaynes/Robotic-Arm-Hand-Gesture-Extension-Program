@@ -18,106 +18,58 @@ THRESHOLD = 0.1
 
 # *** Hand Gestures & Interpretations ***
 def interpretHandGest(landmarks):
-        handGestures = [
-            HandGestures.trackingDisengaged(landmarks),
-            HandGestures.railControlGest(landmarks),
-            HandGestures.armControlGest(landmarks),
-            HandGestures.closed_hand(landmarks),
-            HandGestures.open_hand(landmarks) ]
+    (first, middle, ring, pinky, thumb) = determineFingers(landmarks)
 
-        for gesture in range(len(handGestures)):
-            if handGestures[gesture] == True:
-                return gesture+1 # add 1 to make it a 1-5 index range instead of 0-4 index range
+    handGestures = [
+        HandGestures.trackingDisengaged(first, middle, ring, pinky, thumb),
+        HandGestures.railControlGest(first, middle, ring, pinky, thumb),
+        HandGestures.armControlGest(first, middle, ring, pinky, thumb),
+        HandGestures.closed_hand(first, middle, ring, pinky, thumb),
+        HandGestures.open_hand(first, middle, ring, pinky, thumb) ]
 
-        return 0 # Returns 0 if no listed gesture detected
+    printFingers(first, middle, ring, pinky, thumb)
+
+    for gesture in range(len(handGestures)):
+        if handGestures[gesture] == True:
+            return gesture+1 # add 1 to make it a 1-5 index range instead of 0-4 index range
+
+    return 0 # Returns 0 if no listed gesture detected
+
+def printFingers(first, middle, ring, pinky, thumb):
+    print("\n\n===========\nFingers open\n---------\n", "First: ", first, "\nMiddle: ",
+          middle, "\nRing: ", ring, "\nPinky: ", pinky,
+          "\nThumb: ", thumb)
+
+def determineFingers(landmarks):
+    is_index_finger_open = (abs(landmarks[INDEX_FINGER_IDX].y - landmarks[INDEX_KNUCKLE_BIDX].y)) > THRESHOLD
+    is_middle_finger_open = (abs(landmarks[MID_FINGER_IDX].y - landmarks[MID_KNUCKLE_BIDX].y)) > THRESHOLD
+    is_ring_finger_open = (abs(landmarks[RING_FINGER_IDX].y - landmarks[RING_KNUCKLE_BIDX].y)) > THRESHOLD
+    is_pinky_finger_open = (abs(landmarks[PINKY_FINGER_IDX].y - landmarks[PINKY_KNUCKLE_BIDX].y)) > THRESHOLD
+
+    is_thumb_open = (abs(
+            math.hypot(landmarks[THUMB_IDX].x - landmarks[INDEX_KNUCKLE_BIDX].x,
+                       landmarks[THUMB_IDX].y - landmarks[INDEX_KNUCKLE_BIDX].y))
+            > THRESHOLD+0.009)
+
+    return (is_index_finger_open, is_middle_finger_open, is_ring_finger_open, is_pinky_finger_open, is_thumb_open)
 
 class HandGestures:
     # Engages/Disengages control
-    def trackingDisengaged(landmarks):
-        # Calculate distances between fingertips and knuckles
-        dist_index_finger = math.hypot(
-            landmarks[INDEX_FINGER_IDX].x - landmarks[INDEX_KNUCKLE_BIDX].x,
-            landmarks[INDEX_FINGER_IDX].y - landmarks[INDEX_KNUCKLE_BIDX].y)
-        dist_middle_finger = math.hypot(
-            landmarks[MID_FINGER_IDX].x - landmarks[MID_KNUCKLE_BIDX].x,
-            landmarks[MID_FINGER_IDX].y - landmarks[MID_KNUCKLE_BIDX].y)
-        dist_ring_finger = math.hypot(
-            landmarks[RING_FINGER_IDX].x - landmarks[RING_KNUCKLE_BIDX].x,
-            landmarks[RING_FINGER_IDX].y - landmarks[RING_KNUCKLE_BIDX].y)
-        dist_pinky_finger = math.hypot(
-            landmarks[PINKY_FINGER_IDX].x - landmarks[PINKY_KNUCKLE_BIDX].x,
-            landmarks[PINKY_FINGER_IDX].y - landmarks[PINKY_KNUCKLE_BIDX].y)
-
-        # Define a threshold for "closed" state
-        is_index_finger_closed = dist_index_finger < THRESHOLD
-        is_middle_finger_closed = dist_middle_finger < THRESHOLD
-        is_ring_finger_closed = dist_ring_finger < THRESHOLD
-        is_pinky_finger_closed = dist_pinky_finger < THRESHOLD
-
-        # Consider the thumb differently (it often moves along x-axis more prominently)
-        is_thumb_open = (
-            math.hypot(landmarks[THUMB_IDX].x - landmarks[INDEX_FINGER_IDX].x,
-                landmarks[THUMB_IDX].y - landmarks[INDEX_FINGER_IDX].y)
-                > THRESHOLD)
-
-        return ( is_index_finger_closed
-            and is_middle_finger_closed
-            and is_ring_finger_closed
-            and is_pinky_finger_closed
-            and is_thumb_open )
+    def trackingDisengaged(first, middle, ring, pinky, thumb):
+        return (not first and not middle and not ring and not pinky and thumb)
 
     # Engages rail control
-    def railControlGest(landmarks):
-        is_index_finger_open = (landmarks[INDEX_FINGER_IDX].y - landmarks[INDEX_KNUCKLE_BIDX].y) > THRESHOLD
-        is_middle_finger_closed = (landmarks[MID_FINGER_IDX].y - landmarks[MID_KNUCKLE_BIDX].y) < THRESHOLD
-        is_ring_finger_closed = (landmarks[RING_FINGER_IDX].y - landmarks[RING_KNUCKLE_BIDX].y) < THRESHOLD
-        is_pinky_finger_closed = (landmarks[PINKY_FINGER_IDX].y - landmarks[PINKY_KNUCKLE_BIDX].y) < THRESHOLD
-
-        is_thumb_closed = (
-            math.hypot(landmarks[THUMB_IDX].x - landmarks[MID_KNUCKLE_BIDX].x,
-                landmarks[THUMB_IDX].y - landmarks[MID_KNUCKLE_BIDX].y)
-                < THRESHOLD)
-
-        return (is_index_finger_open and is_middle_finger_closed and is_ring_finger_closed and is_pinky_finger_closed and is_thumb_closed)
+    def railControlGest(first, middle, ring, pinky, thumb):
+        return (first and not middle and not ring and not pinky and not thumb)
 
     # Engages arm control
-    def armControlGest(landmarks):
-        is_index_finger_open = (landmarks[INDEX_FINGER_IDX].y - landmarks[INDEX_KNUCKLE_BIDX].y) > THRESHOLD
-        is_middle_finger_open = (landmarks[MID_FINGER_IDX].y - landmarks[MID_KNUCKLE_BIDX].y) > THRESHOLD
-        is_ring_finger_open = (landmarks[RING_FINGER_IDX].y - landmarks[RING_KNUCKLE_BIDX].y) > THRESHOLD
-        is_pinky_finger_closed = (landmarks[PINKY_FINGER_IDX].y - landmarks[PINKY_KNUCKLE_BIDX].y) < THRESHOLD
-
-        is_thumb_closed = (
-            math.hypot(landmarks[THUMB_IDX].x - landmarks[PINKY_FINGER_IDX].x,
-                landmarks[THUMB_IDX].y - landmarks[PINKY_FINGER_IDX].y)
-                < THRESHOLD)
-
-        return (is_index_finger_open and is_middle_finger_open and is_ring_finger_open and is_pinky_finger_closed and is_thumb_closed)
+    def armControlGest(first, middle, ring, pinky, thumb):
+        return (first and middle and ring and not pinky and not thumb)
 
     # Closes mechanical hand
-    def closed_hand(landmarks):
-        is_index_finger_closed = (landmarks[INDEX_FINGER_IDX].y - landmarks[INDEX_KNUCKLE_BIDX].y) < THRESHOLD
-        is_middle_finger_closed = (landmarks[MID_FINGER_IDX].y - landmarks[MID_KNUCKLE_BIDX].y) < THRESHOLD
-        is_ring_finger_closed = (landmarks[RING_FINGER_IDX].y - landmarks[RING_KNUCKLE_BIDX].y) < THRESHOLD
-        is_pinky_finger_closed = (landmarks[PINKY_FINGER_IDX].y - landmarks[PINKY_KNUCKLE_BIDX].y) < THRESHOLD
-
-        is_thumb_closed = (
-            math.hypot(landmarks[THUMB_IDX].x - landmarks[INDEX_FINGER_IDX].x,
-                landmarks[THUMB_IDX].y - landmarks[INDEX_FINGER_IDX].y)
-                < THRESHOLD)
-
-        return (is_index_finger_closed and is_middle_finger_closed and is_ring_finger_closed and is_pinky_finger_closed and is_thumb_closed)
+    def closed_hand(first, middle, ring, pinky, thumb):
+        return (not first and not middle and not ring and not pinky and not thumb)
 
     # Opens mechanical hand
-    def open_hand(landmarks):
-        is_index_finger_open = (landmarks[INDEX_FINGER_IDX].y - landmarks[INDEX_KNUCKLE_BIDX].y) > THRESHOLD
-        is_middle_finger_open = (landmarks[MID_FINGER_IDX].y - landmarks[MID_KNUCKLE_BIDX].y) > THRESHOLD
-        is_ring_finger_open = (landmarks[RING_FINGER_IDX].y - landmarks[RING_KNUCKLE_BIDX].y) > THRESHOLD
-        is_pinky_finger_open = (landmarks[PINKY_FINGER_IDX].y - landmarks[PINKY_KNUCKLE_BIDX].y) > THRESHOLD
-
-        is_thumb_open = (
-            math.hypot(landmarks[THUMB_IDX].x - landmarks[INDEX_FINGER_IDX].x,
-                landmarks[THUMB_IDX].y - landmarks[INDEX_FINGER_IDX].y)
-                > THRESHOLD)
-
-        return (is_index_finger_open and is_middle_finger_open and is_ring_finger_open and is_pinky_finger_open and is_thumb_open)
+    def open_hand(first, middle, ring, pinky, thumb):
+        return (first and middle and ring and pinky and thumb)

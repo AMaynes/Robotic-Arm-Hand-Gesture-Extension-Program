@@ -4,7 +4,7 @@ import cv2
 import mediapipe as mp
 import gestures
 
-GESTURE_UPDATE_INTERVAL = 10
+GESTURE_UPDATE_INTERVAL = 30
 
 # Open camera
 videoCap1 = cv2.VideoCapture(0)
