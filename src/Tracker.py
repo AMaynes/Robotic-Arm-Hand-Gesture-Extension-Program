@@ -129,7 +129,8 @@ def beginTracking(arm_type):
                 print("\nX: ", round(palm_x), "  -  Y: ", round(palm_y))
 
                 invertedY = pix_h - palm_y # Invert Y because 0 Y is top of the camera
-                normalPalm_x = palm_x / pix_w
+                invertedX = pix_w - palm_x # Invert X because 0 X is left of the camera
+                normalPalm_x = invertedX / pix_w
                 palm_x = (normalPalm_x * 760) - 380 # Translate into a +/- 380 x-axis
                 palm_y = ((invertedY / pix_h) * 516) - 16 # Translate into a +500/-16 y-axis
 
