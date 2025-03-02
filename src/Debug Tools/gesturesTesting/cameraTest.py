@@ -48,13 +48,6 @@ while True:
 
         # Hand tracking and gesture recognition
         # Draw a cross at the location of the robot arm base for reference
-        camWidthCenter = int(camResWidth / 2)
-        camHeightCenter = int(camResHeight / 2)
-        print(camWidthCenter, camHeightCenter, " | ", camResWidth, camResHeight)
-        cv2.line(videoCap1, (camWidthCenter - 10, camHeightCenter), (camWidthCenter + 10, camHeightCenter),
-                 (0, 255, 0), 5)  # Horizontal line
-        cv2.line(videoCap1, (camWidthCenter, camHeightCenter - 10), (camWidthCenter, camHeightCenter + 10),
-                 (0, 255, 0), 5)  # Vertical line
 
         if recHands1.multi_hand_landmarks:
 

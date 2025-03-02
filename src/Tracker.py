@@ -131,6 +131,7 @@ def beginTracking(arm_type):
                 invertedY = pix_h - palm_y # Invert Y because 0 Y is top of the camera
                 invertedX = pix_w - palm_x # Invert X because 0 X is left of the camera
                 normalPalm_x = invertedX / pix_w
+                lineaRail_x = palm_x / pix_w # linearRail x value will be different than an invertedX
                 palm_x = (normalPalm_x * 760) - 380 # Translate into a +/- 380 x-axis
                 palm_y = ((invertedY / pix_h) * 516) - 16 # Translate into a +500/-16 y-axis
 
@@ -162,7 +163,7 @@ def beginTracking(arm_type):
 
             # Predict next hand position using physics
             predicted_position = hand_physics.predictNextPosition((palm_y, palm_x, palm_z), 0.1)
-            lineaRail = normalPalm_x * 1000 # 1000 is perfect, if there are issues, its with the coordinate calibration
+            lineaRail = lineaRail_x * 1000 # 1000 is perfect, if there are issues, its with the coordinate calibration
 
             # Movement handling (if track enables and predicted position is reachable then move to proposed position)
             if track and coordProcessing.CoordinateProcessing.isPositionValid(controlMode, palm_y, palm_x, palm_z, lineaRail):

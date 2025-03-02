@@ -1,6 +1,7 @@
 import math
 
 THUMB_IDX = 4
+THUMB_KNUCKLE_IDX = 3
 THUMB_BIDX = 1
 INDEX_FINGER_IDX = 8
 INDEX_KNUCKLE_BIDX = 5
@@ -44,12 +45,13 @@ def determineFingers(landmarks):
     is_index_finger_open = (abs(landmarks[INDEX_FINGER_IDX].y - landmarks[INDEX_KNUCKLE_BIDX].y)) > THRESHOLD
     is_middle_finger_open = (abs(landmarks[MID_FINGER_IDX].y - landmarks[MID_KNUCKLE_BIDX].y)) > THRESHOLD
     is_ring_finger_open = (abs(landmarks[RING_FINGER_IDX].y - landmarks[RING_KNUCKLE_BIDX].y)) > THRESHOLD
-    is_pinky_finger_open = (abs(landmarks[PINKY_FINGER_IDX].y - landmarks[PINKY_KNUCKLE_BIDX].y)) > THRESHOLD
+
+    is_pinky_finger_open = (abs(landmarks[PINKY_FINGER_IDX].y - landmarks[PINKY_KNUCKLE_BIDX].y)) > THRESHOLD+0.04
 
     is_thumb_open = (abs(
-            math.hypot(landmarks[THUMB_IDX].x - landmarks[INDEX_KNUCKLE_BIDX].x,
-                       landmarks[THUMB_IDX].y - landmarks[INDEX_KNUCKLE_BIDX].y))
-            > THRESHOLD+0.009)
+            math.hypot(landmarks[THUMB_KNUCKLE_IDX].x - landmarks[INDEX_KNUCKLE_BIDX].x,
+                       landmarks[THUMB_KNUCKLE_IDX].y - landmarks[INDEX_KNUCKLE_BIDX].y))
+            > THRESHOLD-0.02)
 
     return (is_index_finger_open, is_middle_finger_open, is_ring_finger_open, is_pinky_finger_open, is_thumb_open)
 
