@@ -14,11 +14,24 @@ this program can be used to teach ME-150 students about emerging AI & robotics t
 ## General Design Diagram 
 UserInterface ->  *Calls "Tracker" Methods*  
 
-Tracker (prev. named TrackingInterfacing) -> *Main logic/program flow*
+Tracker -> (prev. named TrackingInterfacing) *Main logic/program flow*
 
-- RobotArmCommands (prev. named RobotArmInterfacing) *Provides access to a generalized set of robot commands*  
-- CoordGestureInterpretation *Provides coordinate & gesture interpretation logic and computations*
-- Config.json file *Provides robotic arm specific details*
+- RobotArmCommands -> (prev. named RobotArmInterfacing) *Provides access to a generalized set of robot commands*  
+  
+
+- gestureInterpretation -> *Provides gesture interpretation logic*  
+  
+
+- coordProcessing -> *Provides camera & hand coordinate logic, computations, and hand physics functions*
+  
+
+- Config.json file -> *Provides robotic arm specific details*
+
+### Directory Breakdown
+
+- Docs -> A location for the main research publication and any supporting documentations/publications or other informative files
+- Resources -> A location for UI icons and other images used in the scripts
+- src -> A location for all the program scripts
 
 ### Other Specific files:
 - Req. Python File: DobotArm *Provides access to the dobot magician specific commands*
