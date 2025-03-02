@@ -29,6 +29,7 @@ class DobotArm:
         x -= current_x
         y -= current_y
         z -= current_z
+        print("CALLED DOBOT CMDS")
         dType.SetCPCmd(self.api, 0, x, y, z, 100, isQueued=0)
 
     def enableRail(self, enable):

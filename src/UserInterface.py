@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 import ctypes
@@ -11,7 +12,9 @@ class UserInterfaceApp:
         self.master.geometry("400x300")
         myappid = 'com.RoboticArm.GestureControl'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        self.master.iconbitmap(r'C:\Users\alexm\Documents\School\Projects\Python Code\Dobot Research\Abstracting\favicon.ico')
+        base_dir = os.path.dirname(os.path.dirname(__file__))  # Moves up one level from "src"
+        icon_path = os.path.join(base_dir, "Resources", "favicon.ico")
+        self.master.iconbitmap(icon_path)
 
         # Main Menu
         self.main_menu()
