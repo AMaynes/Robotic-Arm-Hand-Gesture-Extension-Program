@@ -29,7 +29,6 @@ class DobotArm:
         x -= current_x
         y -= current_y
         z -= current_z
-        print("CALLED DOBOT CMDS")
         dType.SetCPCmd(self.api, 0, x, y, z, 100, isQueued=0)
 
     def enableRail(self, enable):
@@ -42,7 +41,12 @@ class DobotArm:
 
     def set_gripper_state(self, state):
         dType.SetQueuedCmdClear(self.api)
-        dType.SetEndEffectorGripper(self.api, state, 1, isQueued=0)
+        dType.SetEndEffectorGripper(self.api, 1, state, isQueued=0)
+
+    # Turn off air compressor on close program bc its really annoying
+    def turnOffAnnoyingThing(self):
+        dType.SetQueuedCmdClear(self.api)
+        dType.SetEndEffectorGripper(self.api, 0, 0, isQueued=0)
 
     def disconnect(self):
         dType.DisconnectDobot(self.api)

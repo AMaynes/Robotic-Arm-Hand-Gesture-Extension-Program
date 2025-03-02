@@ -108,18 +108,18 @@ class HandPhysics:
 
     # Predict next hand coordinates based on calculated velocity & acceleration
     def predictNextPosition(self, current_position, time_interval):
-        """
-        Predict the next position based on velocity and acceleration.
-        """
         velocity, acceleration = self.calculatePhysics(current_position)
+
+        speed = math.sqrt(velocity[0]**2 + velocity[1]**2 + velocity[2]**2)
+        print("Speed: ", speed)
+
+        # If movement is minimum so don't move dobot - trying to adjust for unsteady hand
+        if speed <= 60:
+            return current_position
 
         # Predict next position
         next_position = tuple(
             c + v * time_interval + 0.5 * a * (time_interval ** 2)
             for c, v, a in zip(current_position, velocity, acceleration)
         )
-        """
-        swapped_position = (next_position[1], next_position[0], next_position[2])
-        return swapped_position # MIGHT NEED TO DO THIS TO SWAP Y AND X - BUT ALSO THAT WOULD CAUSE ISSUES IN ABSTRACT DEVELOPMENT FOR OTHER BOTS
-        """
         return next_position

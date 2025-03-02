@@ -16,6 +16,12 @@ class UserInterfaceApp:
         icon_path = os.path.join(base_dir, "Resources", "favicon.ico")
         self.master.iconbitmap(icon_path)
 
+        # DEBUG QUICK START (Don't have to go through the UI to connect to the dobot)
+        debugStart = True
+        if debugStart:
+            beginTracking("Dobot")
+
+
         # Main Menu
         self.main_menu()
 
@@ -23,7 +29,7 @@ class UserInterfaceApp:
         """Main menu with 'Track' and 'Edit Arm Variables' options."""
         self.clear_window()
 
-        # Welcome Label
+        # Welcome
         tk.Label(self.master, text="Welcome to Robotic Arm Interface", font=("Arial", 14)).pack(pady=20)
 
         # Track Button

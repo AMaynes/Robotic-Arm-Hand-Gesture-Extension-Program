@@ -81,6 +81,7 @@ def beginTracking(arm_type):
     robotic_arm.set_gripper_state(0)
     track = False
     controlMode = 1
+    lastGesture = 0
 
     # Video camera loop
     while True:
@@ -125,28 +126,36 @@ def beginTracking(arm_type):
                 palm_x = sum_x / 3
                 palm_y = sum_y / 3
                 cv2.circle(combined_img, (int(palm_x), int(palm_y)), 10, (255, 0, 0), cv2.FILLED)
+                print("\nX: ", round(palm_x), "  -  Y: ", round(palm_y))
+
+                invertedY = pix_h - palm_y # Invert Y because 0 Y is top of the camera
                 normalPalm_x = palm_x / pix_w
-                palm_x = ((palm_x / pix_w) * 760) - 380
-                palm_y = ((palm_y / pix_h) * 516) - 16
+                palm_x = (normalPalm_x * 760) - 380 # Translate into a +/- 380 x-axis
+                palm_y = ((invertedY / pix_h) * 516) - 16 # Translate into a +500/-16 y-axis
+
+                print("Dobot X: ", round(palm_x), "  -  Dobot Y: ", round(palm_y))
+
                 palm_z = coordProcessing.CoordinateProcessing.determineZCoord(hand.landmark)
 
+            # Check for gesture updates
             if frame % GESTURE_UPDATE_INTERVAL == 0:
 
                 # Gesture handling
                 gesture = gestureInterpretation.interpretHandGest(hand.landmark)
-                if gesture == 1:  # Toggle tracking
-                    track = not track
-                    time.sleep(2)  # Wait before toggling again
-                elif gesture == 2:  # Rail control mode
-                    controlMode = 1
-                    robotic_arm.enableRail(1) # Enable Rail
-                elif gesture == 3:  # Arm control mode
-                    controlMode = 2
-                    robotic_arm.enableRail(0) # Disable Rail
-                elif gesture == 4:  # Close gripper
-                    robotic_arm.set_gripper_state(1)
-                elif gesture == 5:  # Open gripper
-                    robotic_arm.set_gripper_state(0)
+                if lastGesture != gesture: # Only process gestures when the user intends one
+                    if gesture == 1:  # Toggle tracking
+                        track = not track
+                    elif gesture == 2:  # Rail control mode
+                        controlMode = 1
+                        robotic_arm.enableRail(1) # Enable Rail
+                    elif gesture == 3:  # Arm control mode
+                        controlMode = 2
+                        robotic_arm.enableRail(0) # Disable Rail
+                    elif gesture == 4:  # Close gripper
+                        robotic_arm.set_gripper_state(1)
+                    elif gesture == 5:  # Open gripper
+                        robotic_arm.set_gripper_state(0)
+                    lastGesture = gesture
 
                 frame = 0
 
@@ -173,8 +182,9 @@ def beginTracking(arm_type):
 
         # Break loop on 'q' key press
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            robotic_arm.set_gripper_state(0)
+            robotic_arm.turnOffAnnoyingThing()
             robotic_arm.disconnect()
+            exit(0)
             break
 
     # Release resources
