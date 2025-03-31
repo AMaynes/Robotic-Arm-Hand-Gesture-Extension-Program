@@ -4,6 +4,7 @@ import time, sys
 import numpy as np
 import json
 from src.DoBotArm import gestureInterpretation, coordProcessing
+from src.fileLoading.fileLoader import *
 
 WRIST_IDX = 0
 MID_KNUCKLE_IDX = 9
@@ -11,10 +12,14 @@ RING_KNUCKLE_IDX = 13
 GESTURE_UPDATE_INTERVAL = 10
 
 # Detects arm type and connect to it
-def initialize_robotic_arm(arm_type, config_path="config.json"):
+def initialize_robotic_arm(arm_type):
+    # config_path = "config.json"
+
     # Load the configuration
-    with open(config_path, "r") as f:
-        config = json.load(f)
+    # with open(config_path, "r") as f:
+    #     config = json.load(f)
+
+    config = load_json_file("config.json")
 
     # Find the configuration for the specified arm type
     arm_config = next((arm for arm in config["robotic_arms"] if arm["arm_type"] == arm_type), None)

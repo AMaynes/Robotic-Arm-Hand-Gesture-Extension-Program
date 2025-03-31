@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import ctypes
 from src.GUI.Tracker import beginTracking
+from src.fileLoading.fileLoader import *
 
 
 class UserInterfaceApp:
@@ -12,8 +13,11 @@ class UserInterfaceApp:
         self.master.geometry("400x300")
         myappid = 'com.RoboticArm.GestureControl'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        base_dir = os.path.dirname(os.path.dirname(__file__))  # Moves up one level from "src"
-        icon_path = os.path.join(base_dir, "Resources", "favicon.ico")
+
+        # base_dir = os.path.dirname(os.path.dirname(__file__))  # Moves up one level from "src"
+        # icon_path = os.path.join(base_dir, "Resources", "favicon.ico")
+
+        icon_path = load_icon_from_package('Resources/favicon.ico')
         self.master.iconbitmap(icon_path)
 
         # DEBUG QUICK START (Don't have to go through the UI to connect to the dobot)

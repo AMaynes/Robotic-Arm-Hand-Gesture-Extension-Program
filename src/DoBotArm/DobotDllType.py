@@ -2,7 +2,7 @@ from ctypes import *
 import time,  platform
 import os
 import math
-from fileLoading import *
+from src.fileLoading.fileLoader import *
 
 def enum(**enums):
     return type("Enum", (), enums)

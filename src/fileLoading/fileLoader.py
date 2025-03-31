@@ -68,3 +68,45 @@ def load_image_file(file_path):
     except Exception as e:
         print(f"Error loading image file {file_path}: {e}")
         return None
+
+
+def load_icon_from_package(file_path):
+    """
+    Loads an icon file from the package and returns the icon's file path.
+    :param file_path: Path to the icon file inside the package
+    :return: Path to the loaded icon
+    """
+    try:
+        # Use pkg_resources to get the icon file as a byte string
+        icon_data = pkg_resources.resource_string(__name__, file_path)
+
+        # Optionally, save the icon to a temporary file and return its path
+        # Save the icon data to a file in a temporary location or a desired directory
+        temp_file_path = "temp_icon.ico"  # You could choose a location for this file
+
+        all_Paths.append(temp_file_path)  # Store the path in the global variable
+        atexit.register(cleanUp)  # Register the cleanup function to be called at exit
+
+        # Write the icon data to the file
+        with open(temp_file_path, 'wb') as icon_file:
+            icon_file.write(icon_data)
+
+        return temp_file_path
+    except Exception as e:
+        print(f"Error loading icon file {file_path}: {e}")
+    return None
+
+# Load JSON file function
+def load_json_file(file_path):
+    """
+    Loads a JSON file from the package and returns its parsed contents.
+    :param file_path: Path to the JSON file inside the package
+    :return: Parsed JSON data as a dictionary, or None if an error occurs
+    """
+    try:
+        # Use pkg_resources to read the file as a byte string from the package
+        json_data = pkg_resources.resource_string(__name__, file_path).decode('utf-8')
+        return json.loads(json_data)  # Parse the JSON string into a dictionary
+    except Exception as e:
+        print(f"Error loading JSON file {file_path}: {e}")
+        return None
