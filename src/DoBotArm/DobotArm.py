@@ -18,6 +18,9 @@ class DobotArm:
             dType.SetCPRHoldEnable(self.api, True)
             dType.SetPTPCmd(self.api, 2, 170, 0, 0, -90, isQueued=0)
             print("Connected to Dobot and moved to home position!")
+            # if we have connected to the dobot then make sure anytime we exit we disconnect
+            atexit.register(self.turnOffAnnoyingThing)
+            atexit.register(self.disconnect)
             return True
         print("Failed to connect to Dobot.")
         return False

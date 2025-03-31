@@ -3,7 +3,7 @@ import mediapipe as mp
 import time, sys
 import numpy as np
 import json
-import gestureInterpretation, coordProcessing
+from src.DoBotArm import gestureInterpretation, coordProcessing
 
 WRIST_IDX = 0
 MID_KNUCKLE_IDX = 9
@@ -23,7 +23,7 @@ def initialize_robotic_arm(arm_type, config_path="config.json"):
 
     # Load the appropriate robotic arm class
     if arm_config["arm_type"] == "Dobot":
-        from RoboticArms.DobotArm import DobotArm  # type: ignore
+        from src.DoBotArm.DobotArm import DobotArm  # type: ignore
         robotic_arm = DobotArm()
     elif arm_config["arm_type"] == "uArm":
         from RoboticArms.uArm import UArm  # type: ignore
@@ -69,8 +69,8 @@ def beginTracking(arm_type):
     # Declare the type of robotic arm that is being used
     robotic_arm = initialize_robotic_arm(arm_type)
     hand_physics = coordProcessing.HandPhysics()
-    videoCap1 = cv2.VideoCapture(0)  # Camera 1 for hand tracking
-    videoCap2 = cv2.VideoCapture(1)  # Camera 2 for live feed
+    videoCap1 = cv2.VideoCapture(1)  # Camera 1 for hand tracking
+    videoCap2 = cv2.VideoCapture(0)  # Camera 2 for live feed
 
     # Initialize required variables
     lastFrameTime = 0

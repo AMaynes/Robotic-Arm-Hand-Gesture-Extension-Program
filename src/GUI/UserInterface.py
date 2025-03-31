@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 import ctypes
-from Tracker import beginTracking
+from src.GUI.Tracker import beginTracking
 
 
 class UserInterfaceApp:
