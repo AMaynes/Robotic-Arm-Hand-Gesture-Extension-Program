@@ -5,6 +5,9 @@ import numpy as np
 import json
 from src.DoBotArm import gestureInterpretation, coordProcessing
 from src.fileLoading.fileLoader import *
+from src.GUI.CameraSelector import *
+import atexit
+
 
 WRIST_IDX = 0
 MID_KNUCKLE_IDX = 9
@@ -52,13 +55,17 @@ def initialize_robotic_arm(arm_type):
 def camSettings(img1, img2):
     # Resize camera images to fit side by side & Concatenate images side by side
     img1_resized = cv2.resize(img1, (1080, 720))
-    img2_resized = cv2.resize(img2, (1080, 720))
-    combined_img = np.hstack((img1_resized, img2_resized))
+    if img2 is not None:
+        img2_resized = cv2.resize(img2, (1080, 720))
+        combined_img = np.hstack((img1_resized, img2_resized))
+    else:
+        combined_img = img1_resized
+        img2_resized = None
 
     # Bring combined window to the foreground
     cv2.namedWindow("Combined Camera Output", cv2.WINDOW_NORMAL)
     cv2.setWindowProperty("Combined Camera Output", cv2.WND_PROP_TOPMOST, 1)
-    cv2.resizeWindow("Combined Camera Output", 1920, 1080)
+    # cv2.resizeWindow("Combined Camera Output", 1920, 1080)
 
     # Process the first camera feed for hand tracking
     imgRGB1 = cv2.cvtColor(img1_resized, cv2.COLOR_BGR2RGB)
@@ -69,13 +76,31 @@ def camSettings(img1, img2):
 
 # Camera & Tracking Function
 def beginTracking(arm_type):
+    videoCap1 = None
+    videoCap2 = None
+
+    def cleanUp():
+        if videoCap1 is not None:
+            videoCap1.release()
+        if videoCap2 is not None:
+            videoCap2.release()
+        cv2.destroyAllWindows()
+
+    atexit.register(cleanUp)
 
     # Open cameras (0 for the default camera, 1 for an additional camera)
     # Declare the type of robotic arm that is being used
     robotic_arm = initialize_robotic_arm(arm_type)
     hand_physics = coordProcessing.HandPhysics()
-    videoCap1 = cv2.VideoCapture(1)  # Camera 1 for hand tracking
-    videoCap2 = cv2.VideoCapture(0)  # Camera 2 for live feed
+
+    cam1 = CameraSelector.getCamera("Please Select a Tracking Camera", -1)
+    cam2 = CameraSelector.getCamera("Please Select a Vision Camera", cam2)
+
+    videoCap1 = cv2.VideoCapture(cam1)  # Camera 1 for hand tracking
+    if(cam2 is not None):
+        videoCap2 = cv2.VideoCapture(cam2)  # Camera 2 for live feed
+    else:
+        videoCap2 = None
 
     # Initialize required variables
     lastFrameTime = 0
@@ -93,10 +118,14 @@ def beginTracking(arm_type):
         frame += 1
         # Reading images from both cameras
         success1, img1 = videoCap1.read()
-        success2, img2 = videoCap2.read()
+        if videoCap2 is not None:
+            success2, img2 = videoCap2.read()
+        else:
+            im2 = None
+            success2 = True
 
         # Ensure camera is working and define camera settings (including frame rate calculations)
-        if not(success1 and success2): # Quit program if camera error occurs
+        if not(success1 and (videoCap2 is None or success2)): # Quit program if camera error occurs
             print("Error: One camera did not work correctly.")
             quit(1)
         else:
@@ -185,16 +214,29 @@ def beginTracking(arm_type):
                 cv2.circle(combined_img, (100, 100), 10, (0, 0, 255), cv2.FILLED) # Red Tracking Indicator (Not Tracking Indicator)
 
             # Display the camera feed
-            cv2.imshow("Combined Camera Output", combined_img)
+            # cv2.imshow("Combined Camera Output", combined_img)
+            # Get the current window size
+            win_name = "Combined Camera Output"
+            _, _, win_w, win_h = cv2.getWindowImageRect(win_name)
 
-        # Break loop on 'q' key press
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            robotic_arm.turnOffAnnoyingThing()
-            robotic_arm.disconnect()
-            exit(0)
-            break
+            # Make sure width and height are valid before resizing
+            if win_w > 0 and win_h > 0:
+                display_img = cv2.resize(combined_img, (win_w, win_h))
+            else:
+                display_img = combined_img
 
-    # Release resources
-    videoCap1.release()
-    videoCap2.release()
-    cv2.destroyAllWindows()
+            cv2.imshow(win_name, display_img)
+
+            # Detect if window is closed
+            if cv2.getWindowProperty(win_name, cv2.WND_PROP_VISIBLE) < 1:
+                break
+
+
+    # old shut off function
+        # # Break loop on 'q' key press
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     robotic_arm.turnOffAnnoyingThing()
+        #     robotic_arm.disconnect()
+        #     exit(0)
+        #     break
+
