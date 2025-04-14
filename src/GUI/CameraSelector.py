@@ -26,6 +26,8 @@ class CameraPreview:
         self.running = True
         self.update_frame()
 
+
+
     def update_frame(self):
         if not self.running:
             return
@@ -36,8 +38,12 @@ class CameraPreview:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             img = Image.fromarray(frame)
             imgtk = ImageTk.PhotoImage(image=img)
+
+            # Keep a reference to the image
             self.label.imgtk = imgtk
             self.label.config(image=imgtk)
+        else:
+            print(f"Failed to capture frame from camera {self.cam_index}")
 
         self.master.after(30, self.update_frame)
 
@@ -50,6 +56,7 @@ def find_available_cameras(max_index=MAX_CAMERAS):
     available = []
     for i in range(max_index):
         cap = cv2.VideoCapture(i)
+
         if cap.isOpened():
             available.append(i)
             cap.release()

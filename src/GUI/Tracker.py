@@ -5,7 +5,7 @@ import numpy as np
 import json
 from src.DoBotArm import gestureInterpretation, coordProcessing
 from src.fileLoading.fileLoader import *
-from src.GUI.CameraSelector import *
+from src.GUI.CameraSelector import getCamera
 import atexit
 
 
@@ -93,8 +93,10 @@ def beginTracking(arm_type):
     robotic_arm = initialize_robotic_arm(arm_type)
     hand_physics = coordProcessing.HandPhysics()
 
-    cam1 = CameraSelector.getCamera("Please Select a Tracking Camera", -1)
-    cam2 = CameraSelector.getCamera("Please Select a Vision Camera", cam1)
+
+    #Get the index of the cameras we want to us
+    cam1 = getCamera("Please Select a Tracking Camera", -1)
+    cam2 = getCamera("Please Select a Vision Camera", cam1)
 
     videoCap1 = cv2.VideoCapture(cam1)  # Camera 1 for hand tracking
     if(cam2 is not None):

@@ -54,5 +54,6 @@ class DobotArm:
         dType.SetEndEffectorGripper(self.api, 0, 0, isQueued=0)
 
     def disconnect(self):
+        dType.SetQueuedCmdStop(self.api)
         dType.DisconnectDobot(self.api)
         print("Disconnected from Dobot.")

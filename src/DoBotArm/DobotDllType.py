@@ -605,7 +605,10 @@ def load():
         # file_path = os.path.join(dlls_dir, 'DobotDll.dll')
         #
 
-        file_path = fileLoader.loadDll('DobotDll.dll')
+        file_path = fileLoader.loadAllDLLs()
+
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"DLL file does not exist: {file_path}")
 
         return CDLL(file_path, RTLD_GLOBAL)
     elif platform.system() == "Darwin":
