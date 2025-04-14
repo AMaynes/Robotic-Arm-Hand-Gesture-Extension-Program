@@ -5,7 +5,7 @@ import numpy as np
 import json
 from src.DoBotArm import gestureInterpretation, coordProcessing
 from src.fileLoading.fileLoader import *
-from src.GUI.CameraSelector import getCamera
+from src.GUI.CameraSelector import getCameraOne, getCameraTwo
 import atexit
 
 
@@ -13,6 +13,7 @@ WRIST_IDX = 0
 MID_KNUCKLE_IDX = 9
 RING_KNUCKLE_IDX = 13
 GESTURE_UPDATE_INTERVAL = 10
+
 
 # Detects arm type and connect to it
 def initialize_robotic_arm(arm_type):
@@ -54,18 +55,14 @@ def initialize_robotic_arm(arm_type):
 # Cam display settings & variables functions
 def camSettings(img1, img2):
     # Resize camera images to fit side by side & Concatenate images side by side
-    img1_resized = cv2.resize(img1, (1080, 720))
+    img1_resized = cv2.resize(img1, (640, 480))
     if img2 is not None:
-        img2_resized = cv2.resize(img2, (1080, 720))
+        img2_resized = cv2.resize(img2, (640, 480))
         combined_img = np.hstack((img1_resized, img2_resized))
     else:
         combined_img = img1_resized
         img2_resized = None
 
-    # Bring combined window to the foreground
-    cv2.namedWindow("Combined Camera Output", cv2.WINDOW_NORMAL)
-    cv2.setWindowProperty("Combined Camera Output", cv2.WND_PROP_TOPMOST, 1)
-    # cv2.resizeWindow("Combined Camera Output", 1920, 1080)
 
     # Process the first camera feed for hand tracking
     imgRGB1 = cv2.cvtColor(img1_resized, cv2.COLOR_BGR2RGB)
@@ -78,6 +75,7 @@ def camSettings(img1, img2):
 def beginTracking(arm_type):
     videoCap1 = None
     videoCap2 = None
+    img2 = None
 
     def cleanUp():
         if videoCap1 is not None:
@@ -95,8 +93,8 @@ def beginTracking(arm_type):
 
 
     #Get the index of the cameras we want to us
-    cam1 = getCamera("Please Select a Tracking Camera", -1)
-    cam2 = getCamera("Please Select a Vision Camera", cam1)
+    cam1 = getCameraOne()
+    cam2 = getCameraTwo()
 
     videoCap1 = cv2.VideoCapture(cam1)  # Camera 1 for hand tracking
     if(cam2 is not None):
@@ -114,6 +112,15 @@ def beginTracking(arm_type):
     track = False
     controlMode = 1
     lastGesture = 0
+
+    # Bring combined window to the foreground
+    cv2.namedWindow("Combined Camera Output", cv2.WINDOW_NORMAL)
+    cv2.setWindowProperty("Combined Camera Output", cv2.WND_PROP_TOPMOST, 1)
+    # cv2.resizeWindow("Combined Camera Output", 1920, 1080)
+
+
+    cv2.resizeWindow("Combined Camera Output", 720, 360)
+
 
     # Video camera loop
     while True:

@@ -31,7 +31,7 @@ def loadDll(path, dll_name, end):
         # print(f"Exists? {os.path.exists(temp_dll_path)}")
 
         # Step 5: Add the DLL path to the global list
-        all_Paths.append(temp_dll_path)
+        # all_Paths.append(temp_dll_path)
 
         return temp_dll_path
 
@@ -43,7 +43,9 @@ def loadDll(path, dll_name, end):
 def loadAllDLLs():
     global all_Paths  # Declare global to modify the variable outside the function
 
-    atexit.register(cleanUp)  # Register the cleanup function to be called at exit
+    #no need for clean up the DLLs will always write to the same folder and the os should clean it up eventually if
+    # wanted
+    # atexit.register(cleanUp)  # Register the cleanup function to be called at exit
 
     loadDll('DobotCalibrateDll.dll', 'DobotCalibrateDll', ".dll")
     loadDll('msvcp120.dll', 'msvcp120', ".dll")

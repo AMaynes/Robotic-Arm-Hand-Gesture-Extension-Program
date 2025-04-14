@@ -7,6 +7,8 @@ import atexit
 
 MAX_CAMERAS = 5  # You can change this based on your system
 
+cam1 = None
+cam2 = None
 
 class CameraPreview:
     def __init__(self, master, cam_index):
@@ -24,9 +26,8 @@ class CameraPreview:
         self.checkbox.grid(row=0, column=1, sticky='w')  # Checkbox on the right, aligned to west
 
         self.running = True
+        self.imgtk = None  # Store reference to image to prevent garbage collection
         self.update_frame()
-
-
 
     def update_frame(self):
         if not self.running:
@@ -37,11 +38,10 @@ class CameraPreview:
             frame = cv2.resize(frame, (200, 150))
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             img = Image.fromarray(frame)
-            imgtk = ImageTk.PhotoImage(image=img)
+            self.imgtk = ImageTk.PhotoImage(image=img)  # Keep reference to prevent GC
 
-            # Keep a reference to the image
-            self.label.imgtk = imgtk
-            self.label.config(image=imgtk)
+            self.label.imgtk = self.imgtk  # Assign image to the label
+            self.label.config(image=self.imgtk)  # Update the label with new image
         else:
             print(f"Failed to capture frame from camera {self.cam_index}")
 
@@ -143,9 +143,19 @@ def getCamera(label, ignore):
         root.quit()
 
     # Ignore button
-    if(label == "Please Select a Vision Camera"):
+    if (label == "Please Select a Vision Camera"):
         ignore_button = tk.Button(button_frame, text="Ignore", command=return_none_and_quit)
         ignore_button.pack(side="left", padx=10)
+
+    def on_mouse_wheel(event):
+        # Scroll up if wheel is up, scroll down if wheel is down
+        if event.delta > 0:
+            canvas.yview_scroll(-1, "units")  # Scroll up
+        else:
+            canvas.yview_scroll(1, "units")  # Scroll down
+
+    # Bind the mouse wheel to the canvas
+    canvas.bind_all("<MouseWheel>", on_mouse_wheel)
 
     root.protocol("WM_DELETE_WINDOW", on_close)
 
@@ -158,9 +168,16 @@ def getCamera(label, ignore):
     return selected_camera['index']
 
 
+def getCameraOne():
+    return cam1
 
-# # Run it
-# camera = getCamera("Please Select a Tracking Camera", -1)
-#
-# camera = getCamera("Please Select a Vision Camera", -1)
-# print(f"Selected camera: {camera}")
+def getCameraTwo():
+    return cam2
+
+def initialize_cameras():
+    global cam1, cam2  # Use global inside the function to modify these variables
+    cam1 = getCamera("Please Select a Tracking Camera", -1)  # Assign cam1
+    cam2 = getCamera("Please Select a Vision Camera", cam1)  # Assign cam2
+
+# Initialize cameras
+initialize_cameras()
