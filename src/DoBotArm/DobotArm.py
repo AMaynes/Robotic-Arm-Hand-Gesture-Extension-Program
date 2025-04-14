@@ -1,4 +1,6 @@
 import RoboticArms.SDKs.DobotDllType as dType
+import atexit
+
 
 class DobotArm:
 
