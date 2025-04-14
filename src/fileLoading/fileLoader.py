@@ -3,6 +3,7 @@ import ctypes
 import tempfile
 import os
 import atexit
+import json
 
 # Global variable to store the DLL paths
 all_Paths = []
@@ -11,17 +12,21 @@ all_Paths = []
 def loadDll(path):
     global all_Paths  # Declare global to modify the variable outside the function
 
-    # Step 1: Use pkg_resources to read the DLL as a byte string from the package
-    dll_bytes = pkg_resources.resource_string(__name__, f"Dll/{path}")
+    try:
+        # Step 1: Use pkg_resources to read the DLL as a byte string from the package
+        dll_bytes = pkg_resources.resource_string(__name__, f"DllS/{path}")
 
-    # Step 2: Write the byte string to a temporary file
-    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        temp_file.write(dll_bytes)
-        temp_dll_path = temp_file.name  # Get the temporary file path
+        # Step 2: Write the byte string to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            temp_file.write(dll_bytes)
+            temp_dll_path = temp_file.name  # Get the temporary file path
 
-    all_Paths.append(temp_dll_path)  # Store the path in the global variable
-    atexit.register(cleanUp)  # Register the cleanup function to be called at exit
-    return temp_dll_path
+        all_Paths.append(temp_dll_path)  # Store the path in the global variable
+        atexit.register(cleanUp)  # Register the cleanup function to be called at exit
+        return temp_dll_path
+    except Exception as e:
+        print(f"Error loading DLL {path}: {e}")
+        return None
 
 
 def cleanUp():
@@ -106,6 +111,8 @@ def load_json_file(file_path):
     try:
         # Use pkg_resources to read the file as a byte string from the package
         json_data = pkg_resources.resource_string(__name__, file_path).decode('utf-8')
+        # json_data = pkg_resources.resource_string('fileLoader', file_path).decode('utf-8')
+
         return json.loads(json_data)  # Parse the JSON string into a dictionary
     except Exception as e:
         print(f"Error loading JSON file {file_path}: {e}")

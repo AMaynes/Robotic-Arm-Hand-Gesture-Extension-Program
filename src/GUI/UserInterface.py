@@ -183,6 +183,11 @@ class UserInterfaceApp:
 
 # Execute UI
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = UserInterfaceApp(root)
-    root.mainloop()
+    try:
+        root = tk.Tk()
+        app = UserInterfaceApp(root)
+        root.mainloop()
+    except Exception as e:
+        print(f"Error: {e}")
+        print("Exiting... on error")
+        exit(1)

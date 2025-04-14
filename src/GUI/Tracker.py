@@ -94,7 +94,7 @@ def beginTracking(arm_type):
     hand_physics = coordProcessing.HandPhysics()
 
     cam1 = CameraSelector.getCamera("Please Select a Tracking Camera", -1)
-    cam2 = CameraSelector.getCamera("Please Select a Vision Camera", cam2)
+    cam2 = CameraSelector.getCamera("Please Select a Vision Camera", cam1)
 
     videoCap1 = cv2.VideoCapture(cam1)  # Camera 1 for hand tracking
     if(cam2 is not None):

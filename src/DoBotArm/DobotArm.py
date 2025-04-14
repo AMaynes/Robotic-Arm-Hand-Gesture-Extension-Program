@@ -1,4 +1,4 @@
-import RoboticArms.SDKs.DobotDllType as dType
+from src.DoBotArm import DobotDllType as dType
 import atexit
 
 

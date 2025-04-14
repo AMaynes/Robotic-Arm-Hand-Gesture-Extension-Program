@@ -152,8 +152,8 @@ def getCamera(label, ignore):
 
 
 
-# Run it
-camera = getCamera("Please Select a Tracking Camera", -1)
-
-camera = getCamera("Please Select a Vision Camera", -1)
-print(f"Selected camera: {camera}")
+# # Run it
+# camera = getCamera("Please Select a Tracking Camera", -1)
+#
+# camera = getCamera("Please Select a Vision Camera", -1)
+# print(f"Selected camera: {camera}")

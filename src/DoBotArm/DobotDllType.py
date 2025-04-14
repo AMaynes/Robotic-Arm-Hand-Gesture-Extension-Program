@@ -2,7 +2,7 @@ from ctypes import *
 import time,  platform
 import os
 import math
-from src.fileLoading.fileLoader import *
+from src.fileLoading import fileLoader
 
 def enum(**enums):
     return type("Enum", (), enums)
@@ -588,8 +588,8 @@ QuitDobotApiFlag = True
 
 def load():
     if platform.system() == "Windows":
-        print("您用的dll是64位，为了顺利运行，请保证您的python环境也是64位")
-        print("python环境是：",platform.architecture())
+        # print("您用的dll是64位，为了顺利运行，请保证您的python环境也是64位")
+        # print("python环境是：",platform.architecture())
 
 
         # todo make into class loader technique
@@ -609,8 +609,10 @@ def load():
 
         return CDLL(file_path, RTLD_GLOBAL)
     elif platform.system() == "Darwin":
-        return CDLL("./libDobotDll.dylib",  RTLD_GLOBAL)
+        file_path = fileLoader.loadDll('libDobotDll.dylib')
+        return CDLL(file_path,  RTLD_GLOBAL)
     elif platform.system() == "Linux":
+        #TODO make program functional on linux
         return cdll.loadLibrary("libDobotDll.so")
 
 
