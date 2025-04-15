@@ -55,9 +55,13 @@ def initialize_robotic_arm(arm_type):
 # Cam display settings & variables functions
 def camSettings(img1, img2):
     # Resize camera images to fit side by side & Concatenate images side by side
-    img1_resized = cv2.resize(img1, (640, 480))
+    # img1_resized = cv2.resize(img1, (640, 480))
+    img1_resized = cv2.resize(img1, (1080, 720))
+
+
     if img2 is not None:
-        img2_resized = cv2.resize(img2, (640, 480))
+        # img2_resized = cv2.resize(img2, (640, 480))
+        img2_resized = cv2.resize(img2, (1080, 720))
         combined_img = np.hstack((img1_resized, img2_resized))
     else:
         combined_img = img1_resized
@@ -115,11 +119,12 @@ def beginTracking(arm_type):
 
     # Bring combined window to the foreground
     cv2.namedWindow("Combined Camera Output", cv2.WINDOW_NORMAL)
-    cv2.setWindowProperty("Combined Camera Output", cv2.WND_PROP_TOPMOST, 1)
-    # cv2.resizeWindow("Combined Camera Output", 1920, 1080)
 
 
-    cv2.resizeWindow("Combined Camera Output", 720, 360)
+    # cv2.resizeWindow("Combined Camera Output", 720, 360)
+    cv2.resizeWindow("Combined Camera Output", 1920, 1080)
+
+    #todo figure out why the window isn't responding when opened at home we can comment out anycomands to the arm
 
 
     # Video camera loop
