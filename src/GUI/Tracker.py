@@ -43,7 +43,7 @@ def initialize_robotic_arm(arm_type):
     # Connect to the robotic arm
     if robotic_arm.connect(arm_config["port"], arm_config["baudrate"]):
         print(f"{arm_type} connected successfully on port {arm_config['port']} with baudrate {arm_config['baudrate']}.")
-        
+
         # Move to home position and initialize gripper
         robotic_arm.move_to(200, 0, 50)
         robotic_arm.set_gripper_state(1)
