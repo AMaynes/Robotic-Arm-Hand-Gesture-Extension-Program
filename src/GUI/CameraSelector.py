@@ -177,6 +177,9 @@ def getCameraTwo():
 def initialize_cameras():
     global cam1, cam2  # Use global inside the function to modify these variables
     cam1 = getCamera("Please Select a Tracking Camera", -1)  # Assign cam1
+    if(cam1 is None):
+        print("Error: Camera 1 did not connect correctly.")
+        exit(1)
     cam2 = getCamera("Please Select a Vision Camera", cam1)  # Assign cam2
 
 # Initialize cameras

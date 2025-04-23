@@ -3,9 +3,9 @@ import mediapipe as mp
 import time, sys
 import numpy as np
 import json
-from src.DoBotArm import gestureInterpretation, coordProcessing
-from src.fileLoading.fileLoader import *
-from src.GUI.CameraSelector import getCameraOne, getCameraTwo
+from DoBotArm import gestureInterpretation, coordProcessing
+from fileLoading.fileLoader import *
+from GUI.CameraSelector import getCameraOne, getCameraTwo
 import atexit
 
 
@@ -23,7 +23,11 @@ def initialize_robotic_arm(arm_type):
     # with open(config_path, "r") as f:
     #     config = json.load(f)
 
-    config = load_json_file("config.json")
+    config = load_json_file("fileLoading/config.json")
+
+    if config is None:
+        print("❌ Config failed to load. Aborting.")
+        sys.exit(1)
 
     # Find the configuration for the specified arm type
     arm_config = next((arm for arm in config["robotic_arms"] if arm["arm_type"] == arm_type), None)
@@ -100,7 +104,13 @@ def beginTracking(arm_type):
     cam1 = getCameraOne()
     cam2 = getCameraTwo()
 
+
     videoCap1 = cv2.VideoCapture(cam1)  # Camera 1 for hand tracking
+
+    if(videoCap1 is None):
+        print("Error: Camera 1 did not work correctly.")
+        quit(1)
+
     if(cam2 is not None):
         videoCap2 = cv2.VideoCapture(cam2)  # Camera 2 for live feed
     else:

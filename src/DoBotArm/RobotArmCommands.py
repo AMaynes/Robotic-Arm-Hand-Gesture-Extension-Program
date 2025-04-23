@@ -1,5 +1,5 @@
 import json
-from src.DoBotArm.DobotArm import DobotArm  # Import specific arm classes here and make sure to update config file
+from DoBotArm.DobotArm import DobotArm  # Import specific arm classes here and make sure to update config file
 
 class RobotArmInterface:
     def connect(self, port, baudrate):

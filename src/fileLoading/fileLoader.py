@@ -4,10 +4,34 @@ import tempfile
 import os
 import atexit
 import json
+import sys
+import shutil
 
 # Global variable to store the DLL paths
 all_Paths = []
 
+
+def resource_path(relative_path):
+    """ Get path to resource, works for dev and PyInstaller bundle """
+    if hasattr(sys, "_MEIPASS"):
+        # When running as an exe with PyInstaller
+        return os.path.join(sys._MEIPASS, relative_path)
+    else:
+        # When running in development, ensure it resolves to the src directory
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))  # Go two levels up to src
+        return os.path.join(project_root, relative_path)
+
+def load_json_file(relative_path):
+    """Load a JSON file from the correct path"""
+    try:
+        full_path = resource_path(relative_path)
+
+        print(full_path)
+        with open(full_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading JSON file {relative_path}: {e}")
+        return None
 
 # This function loads a DLL from the package and returns its path for CDLL function
 def loadDll(path, dll_name, end):
@@ -132,19 +156,22 @@ def load_icon_from_package(file_path):
     return None
 
 
-# Load JSON file function
-def load_json_file(file_path):
-    """
-    Loads a JSON file from the package and returns its parsed contents.
-    :param file_path: Path to the JSON file inside the package
-    :return: Parsed JSON data as a dictionary, or None if an error occurs
-    """
-    try:
-        # Use pkg_resources to read the file as a byte string from the package
-        json_data = pkg_resources.resource_string(__name__, file_path).decode('utf-8')
-        # json_data = pkg_resources.resource_string('fileLoader', file_path).decode('utf-8')
-
-        return json.loads(json_data)  # Parse the JSON string into a dictionary
-    except Exception as e:
-        print(f"Error loading JSON file {file_path}: {e}")
-        return None
+# # Load JSON file function
+# def load_json_file(file_path):
+#     """
+#         Loads a JSON file from the package and returns its parsed contents.
+#         :param file_path: Path to the JSON file inside the package
+#         :return: Parsed JSON data as a dictionary, or None if an error occurs
+#         """
+#
+#     # tempPath = get_config_path(file_path)
+#
+#     try:
+#         # Use pkg_resources to read the file as a byte string from the package
+#         json_data = pkg_resources.resource_string(__name__, file_path).decode('utf-8')
+#         # json_data = pkg_resources.resource_string('fileLoader', file_path).decode('utf-8')
+#
+#         return json.loads(json_data)  # Parse the JSON string into a dictionary
+#     except Exception as e:
+#         print(f"Error loading JSON file {file_path}: {e}")
+#         return None

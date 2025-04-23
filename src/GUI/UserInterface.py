@@ -2,8 +2,8 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 import ctypes
-from src.GUI.Tracker import beginTracking
-from src.fileLoading.fileLoader import *
+from GUI.Tracker import beginTracking
+from fileLoading.fileLoader import *
 
 
 class UserInterfaceApp:

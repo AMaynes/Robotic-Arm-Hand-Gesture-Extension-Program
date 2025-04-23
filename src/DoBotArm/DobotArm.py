@@ -1,4 +1,4 @@
-from src.DoBotArm import DobotDllType as dType
+from DoBotArm import DobotDllType as dType
 import atexit
 
 
