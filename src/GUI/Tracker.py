@@ -36,7 +36,7 @@ def initialize_robotic_arm(arm_type):
 
     # Load the appropriate robotic arm class
     if arm_config["arm_type"] == "Dobot":
-        from src.DoBotArm.DobotArm import DobotArm  # type: ignore
+        from DoBotArm.DobotArm import DobotArm  # type: ignore
         robotic_arm = DobotArm()
     elif arm_config["arm_type"] == "uArm":
         from RoboticArms.uArm import UArm  # type: ignore

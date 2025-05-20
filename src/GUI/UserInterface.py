@@ -25,7 +25,6 @@ class UserInterfaceApp:
         if debugStart:
             beginTracking("Dobot")
 
-
         # Main Menu
         self.main_menu()
 
@@ -156,7 +155,7 @@ class UserInterfaceApp:
         try:
             # Update variables in your program
             print(f"Saving Variables:\nX: {x}\nY: {y}\nZ: {z}")
-            
+
             # Example: Update a configuration file or global variables
             # config["robotic_arm"]["home_position"] = {"x": x, "y": y, "z": z}
 
@@ -182,11 +181,12 @@ class UserInterfaceApp:
 
 
 # Execute UI
-if __name__ == "__main__":
-    # try:
-        root = tk.Tk()
-        app = UserInterfaceApp(root)
-        root.mainloop()
-    # except Exception as e:
-    #     print(f"Error: {e}")
-    #     exit(1)
+# if __name__ == "__main__":
+#     root = tk.Tk()
+#     app = UserInterfaceApp(root)
+#     root.mainloop()
+
+
+# do nothing else here but start to dobot
+
+beginTracking("Dobot")
