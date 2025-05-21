@@ -15,8 +15,8 @@ class DobotArm:
             self.gobal_version = dType.GetDeviceVersion(self.api)
             dType.SetQueuedCmdClear(self.api)
             dType.SetHOMEParams(self.api, 170, 0, 0, -90, 0)
-            dType.SetPTPCommonParams(self.api, 100, 100,  isQueued=0)
-            dType.SetCPCommonParams(self.api, 100, 100,  isQueued=0)
+            dType.SetPTPCommonParams(self.api, 100, 100, isQueued=0)
+            dType.SetCPCommonParams(self.api, 100, 100, isQueued=0)
             dType.SetCPRHoldEnable(self.api, True)
             dType.SetPTPCmd(self.api, 2, 170, 0, 0, -90, isQueued=0)
             print("Connected to Dobot and moved to home position!")
@@ -40,7 +40,7 @@ class DobotArm:
         dType.SetQueuedCmdClear(self.api)
         dType.SetDeviceWithL(self.api, enable, self.gobal_version[0], 0)
 
-    def rail_move_to(self, x, y, z, l, r=0): # Linear Rail System Movement
+    def rail_move_to(self, x, y, z, l, r=0):  # Linear Rail System Movement
         dType.SetQueuedCmdClear(self.api)
         dType.SetPTPWithLCmd(self.api, 1, x, y, z, r, l, isQueued=0)
 
@@ -54,8 +54,19 @@ class DobotArm:
         dType.SetEndEffectorGripper(self.api, 0, 0, isQueued=0)
 
     def disconnect(self):
-        # Do not delete this next line I know it gives an error but it works perfectly fine to do what it does aka
-        # this id diconnecting the dobot on error
-        dType.SetQueuedCmdStop(self.api)
+        """
+        Safely disconnects the Dobot.
+        Intentionally suppresses a known harmless AttributeError that can occur during SetQueuedCmdStop.
+        """
+        try:
+            # Attempt to stop any queued commands before disconnecting
+            dType.SetQueuedCmdStop(self.api)
+        except AttributeError:
+            # This error occurs if the Dobot is already disconnected or the API is invalid.
+            # It is safe to ignore in this context.
+            pass
+
+        # Disconnect from the Dobot regardless
         dType.DisconnectDobot(self.api)
         print("Disconnected from Dobot.")
+
