@@ -17,7 +17,8 @@ this program can be used to teach ME-150 students about emerging AI & robotics t
 - Resources -> A location for UI icons and other images used in the scripts
 - src -> A location for all the program scripts
 
-- ### Known Bugs/Issues
+  
+## Known Bugs/Issues
 
 - Infinite loop when selecting 2nd camera
 - Tracking camera must see hand in order to work
