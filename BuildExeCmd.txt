@@ -1,0 +1,8 @@
+Place this comand in terminal when in src folder to build the executable
+
+pyinstaller --onefile --hidden-import=cv2 --hidden-import=mediapipe ^
+--add-data "fileLoading\\DLLS;fileLoading\\DLLS" ^
+--add-data "fileLoading\\Resources;fileLoading\\Resources" ^
+--add-data "fileLoading\\config.json;fileLoading" ^
+--add-data "C:\\Users\\poeti\\anaconda3\\Lib\\site-packages\\mediapipe\\modules;mediapipe\\modules" ^
+GUI\\UserInterface.py
