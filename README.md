@@ -1,7 +1,8 @@
-# Dobot Hand Gesture Software
-This program is designed to interface with the dobot magician and allow for control of it using hand gestures.
+# Robotic-Arm-Hand-Gesture-Extension-Program  
+
+This program is designed to interface with the dobot magician robotic arm and allow for control of it using hand gestures via machine learning and computer vision APIs.
 This is achieved through utilizing Google's open sourced Mediapipe and OpenCV. The idea is that
-this program can be used to teach ME-150 students about emerging AI & robotics technologies using Open Source APIs.
+this program can be used to teach college students about emerging AI & robotics technologies using Open Source APIs and solve real world solutions.
 
 ## Requirements & Dependencies
 - Dobot Magician
