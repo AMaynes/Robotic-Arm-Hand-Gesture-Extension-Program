@@ -6,3 +6,5 @@ pyinstaller --onefile --hidden-import=cv2 --hidden-import=mediapipe ^
 --add-data "fileLoading\\config.json;fileLoading" ^
 --add-data "C:\\Users\\poeti\\anaconda3\\Lib\\site-packages\\mediapipe\\modules;mediapipe\\modules" ^
 GUI\\UserInterface.py
+
+
